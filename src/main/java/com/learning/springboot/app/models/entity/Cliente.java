@@ -29,6 +29,8 @@ public class Cliente implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 
+	private static final long serialVersionUID = 1L;
+
 	public Long getId() {
 		return id;
 	}
@@ -72,7 +74,5 @@ public class Cliente implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-
-	private static final long serialVersionUID = 1L;
 
 }
