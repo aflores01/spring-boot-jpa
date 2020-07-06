@@ -35,11 +35,13 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>id</th>
-					<th>nombre</th>
-					<th>apellido</th>
-					<th>fecha</th>
+					<td>Id</td>
+					<td>Nombre</td>
+					<td>Apellido</td>
+					<td>Email</td>
+					<td>Fecha</td>
 					<td>Editar</td>
+					<td>Borrar</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -49,8 +51,8 @@
 					<td th:text="${cliente.apellido}"></td>
 					<td th:text="${cliente.email}"></td>
 					<td th:text="${cliente.createAt}"></td>
-					<td><a class="btn btn-primary btn-xs"
-						th:href="@{/form/}+${cliente.id}" th:text="Editar"></a></td>
+					<td><a class="btn btn-primary btn-xs" th:href="@{/form/}+${cliente.id}" th:text="Editar"></a></td>
+					<td><a class="btn btn-danger btn-xs" th:href="@{/eliminar/}+${cliente.id}" th:text="Borrar" onclick="return confirm('Confirmar eliminación')"></a></td>
 				</tr>
 			</tbody>
 		</table>

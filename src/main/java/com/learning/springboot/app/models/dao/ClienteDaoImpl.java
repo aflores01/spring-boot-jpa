@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learning.springboot.app.models.entity.Cliente;
 
+//DAO CRUD Complete
+
 @Repository
 public class ClienteDaoImpl implements IClienteDao {
 
@@ -34,9 +36,18 @@ public class ClienteDaoImpl implements IClienteDao {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Cliente findOne(Long id) {
 
 		return entityManager.find(Cliente.class, id);
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long id) {
+
+		Cliente cliente = findOne(id);
+		entityManager.remove(cliente);
 	}
 
 }
