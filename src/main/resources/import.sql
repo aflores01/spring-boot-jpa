@@ -28,3 +28,16 @@ INSERT INTO clientes (id,nombre,apellido,email,create_at, foto) VALUES (27,'Andr
 INSERT INTO clientes (id,nombre,apellido,email,create_at, foto) VALUES (28,'Andres','Guzman','mail@correo.com','2017-08-28','');
 INSERT INTO clientes (id,nombre,apellido,email,create_at, foto) VALUES (29,'Andres','Guzman','mail@correo.com','2017-08-28','');
 INSERT INTO clientes (id,nombre,apellido,email,create_at, foto) VALUES (30,'Andres','Guzman','mail@correo.com','2017-08-28','');
+
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic PCC4k',31999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic ATEM Mini',5999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic URSA Mini Pro 4.6k',110999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic URSA Broadcast',31999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic Video Asist',9599,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Blackmagic Studio Fiber Converter',31999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Zhiyun Weebill-s',11999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Zhiyun Smoth 4',2999,NOW());
+INSERT INTO productos (nombre,precio,create_at) VALUES('Sony A7 III',30999,NOW());
+
+INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES('Factura de equipo de grabacion', null, 1, NOW());
+INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(3,1,6);
