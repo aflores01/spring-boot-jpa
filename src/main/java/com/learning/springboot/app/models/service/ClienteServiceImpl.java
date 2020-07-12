@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.learning.springboot.app.models.dao.IClienteDao;
+import com.learning.springboot.app.models.dao.IProductoDao;
 import com.learning.springboot.app.models.entity.Cliente;
+import com.learning.springboot.app.models.entity.Producto;
 
 // Acceso universal a las clases DAO
 @Service
@@ -20,6 +22,9 @@ public class ClienteServiceImpl implements IClienteService {
 	private IClienteDao clienteDao;
 	//
 
+	@Autowired
+	private IProductoDao productoDao;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<Cliente> findAll() {
@@ -50,6 +55,12 @@ public class ClienteServiceImpl implements IClienteService {
 	public Page<Cliente> findAll(Pageable pageable) {
 		
 		return clienteDao.findAll(pageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Producto> findByName(String term) {
+		return productoDao.findByNombreLikeIgnoreCase("%"+term+"%");
 	}
 
 }
