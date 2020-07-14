@@ -20,11 +20,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/","/listar","/css/**","/js/**","/images/**").permitAll()
 		.antMatchers("/ver/**").hasAnyRole("USER")
 		.antMatchers("/uploads/**").hasAnyRole("USER")
+		.antMatchers("/factura/eliminar/**").hasAnyRole("ADMIN")
+		.antMatchers("/factura/ver/**").hasAnyRole("USER")
+		.antMatchers("/eliminar/**").hasAnyRole("ADMIN")
 		.antMatchers("/form/**").hasAnyRole("ADMIN")
+		.antMatchers("/factura/form/**").hasAnyRole("ADMIN")
 		.anyRequest().authenticated()
 		.and().formLogin().loginPage("/login")
 		.permitAll()
-		.and().logout().permitAll();
+		.and().logout().permitAll()
+		.and().exceptionHandling().accessDeniedPage("/403");
 	}
 
 	@Bean
