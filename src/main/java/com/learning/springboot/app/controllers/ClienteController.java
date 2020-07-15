@@ -2,6 +2,7 @@ package com.learning.springboot.app.controllers;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -14,6 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,7 +49,7 @@ public class ClienteController {
 	public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
 
 		Resource recurso = null;
-		
+
 		try {
 			recurso = uploadService.load(filename);
 		} catch (MalformedURLException e) {
@@ -56,27 +60,32 @@ public class ClienteController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"")
 				.body(recurso);
 	}
-	
 
 	@GetMapping(value = "/ver/{id}")
 	public String ver(@PathVariable(value = "id") long id, Map<String, Object> model, RedirectAttributes flash) {
-		
+
 		Cliente cliente = clienteService.fetchByIdWithFacturas(id);
 		if (cliente == null) {
 			flash.addFlashAttribute("error", "El cliente no se encuentra en la base de datos");
 			return "redirect:/listar";
 		}
-		
+
 		model.put("titulo", "Detalle del cliente: ".concat(cliente.getNombre()));
 		model.put("cliente", cliente);
 		return "ver";
 	}
 
-	@RequestMapping(value = {"/listar","/"}, method = RequestMethod.GET)
-	public String listar(Model model, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+	@RequestMapping(value = { "/listar", "/" }, method = RequestMethod.GET)
+	public String listar(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
+			Authentication authentication) {
 		Pageable pageRequest = PageRequest.of(page, 5);
-		if(authentication != null) {
+		if (authentication != null) {
 			model.addAttribute("userName", authentication.getName());
+		}
+		if(hasRole("ROLE_ADMIN")) {
+			model.addAttribute("acceso","Acceso total");
+		}else {
+			model.addAttribute("acceso","Acceso simple");
 		}
 		Page<Cliente> clientes = clienteService.findAll(pageRequest);
 		PageRender<Cliente> pageRender = new PageRender<>("/listar", clientes);
@@ -96,9 +105,9 @@ public class ClienteController {
 
 	@RequestMapping(value = "/form/{id}")
 	public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
-		
+
 		Cliente cliente = null;
-		
+
 		if (id > 0) {
 			cliente = clienteService.findOne(id);
 			if (cliente == null) {
@@ -124,19 +133,19 @@ public class ClienteController {
 		}
 
 		if (!foto.isEmpty()) {
-			
+
 			if (cliente.getId() != null && cliente.getFoto() != null && cliente.getFoto().length() > 0) {
 				uploadService.delete(cliente.getFoto());
 			}
-			
+
 			String uniqueFilename = null;
 			try {
 				uniqueFilename = uploadService.copy(foto);
-				
+
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			flash.addFlashAttribute("info","Has subido exitosamente: ".concat(uniqueFilename));
+			flash.addFlashAttribute("info", "Has subido exitosamente: ".concat(uniqueFilename));
 			cliente.setFoto(uniqueFilename);
 		}
 
@@ -159,5 +168,23 @@ public class ClienteController {
 
 		}
 		return "redirect:/listar";
+	}
+
+	private boolean hasRole(String role) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		if (context == null) {
+			return false;
+		}
+		Authentication auth = context.getAuthentication();
+		if (auth == null) {
+			return false;
+		}
+		Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+		for (GrantedAuthority authority : authorities) {
+			if(role.equals(authority.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
