@@ -1,5 +1,7 @@
 package com.learning.springboot.app;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,10 @@ import com.learning.springboot.app.auth.handler.LoginSuccessHandler;
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
+	
+	@Autowired
+	DataSource dataSource;
+	
 	@Autowired
 	private LoginSuccessHandler successHandler;
 	
@@ -33,21 +39,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().logout().permitAll()
 		.and().exceptionHandling().accessDeniedPage("/403");
 	}
-
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	@Autowired
 	public void configurerGlobal(AuthenticationManagerBuilder builder) throws Exception {
-		
-		PasswordEncoder encoder = passwordEncoder();
-		UserBuilder users = User.builder().passwordEncoder(encoder::encode);
-		
-		builder.inMemoryAuthentication()
-		.withUser(users.username("admin").password("12345").roles("ADMIN","USER"))
-		.withUser(users.username("user").password("12345").roles("USER"));
-		
+		builder.jdbcAuthentication()
+		.dataSource(dataSource)
+		.passwordEncoder(passwordEncoder)
+		.usersByUsernameQuery("select username, password, enabled from users where username=?")
+		.authoritiesByUsernameQuery("select u.username, a.authority from authorities a inner join users u on (a.user_id=u.id) where u.username=?");
 	}
 }

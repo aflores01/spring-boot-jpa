@@ -41,3 +41,6 @@ INSERT INTO productos (nombre,precio,create_at) VALUES('Sony A7 III',30999,NOW()
 
 INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES('Factura de equipo de grabacion', null, 1, NOW());
 INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(3,1,6);
+
+INSERT INTO users (username,password, enabled) VALUES('admin','12345','1')
+INSERT INTO users (username,password, enabled) VALUES('user','12345','1')
